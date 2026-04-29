@@ -27,11 +27,11 @@ export const MultiplayerSetup = () => {
 
   const handleJoin = () => {
     if (!joinId.trim()) {
-      toast.error("Please enter a game ID!");
+      toast.error(t("multiplayerSetup.enterGameIdError"));
       return;
     }
     if (!username.trim()) {
-      toast.error("Please enter your username!");
+      toast.error(t("multiplayerSetup.enterUsernameError"));
       return;
     }
     joinGame(joinId.trim(), username.trim());
@@ -39,7 +39,7 @@ export const MultiplayerSetup = () => {
 
   const handleHost = () => {
     if (!username.trim()) {
-      toast.error("Please enter your username!");
+      toast.error(t("multiplayerSetup.enterUsernameError"));
       return;
     }
     hostGame(username.trim());
@@ -57,13 +57,13 @@ export const MultiplayerSetup = () => {
               className="w-full bg-primary hover:bg-primary/90 transition-colors duration-200"
             >
               <UserPlus className="mr-2 h-4 w-4" />
-              Host New Game
+              {t("multiplayerSetup.hostNewGame")}
             </Button>
 
             <div className="relative flex items-center">
               <span className="flex-grow border-t border-white/10"></span>
               <span className="px-4 text-xs uppercase text-muted-foreground">
-                Or join existing game
+                {t("multiplayerSetup.joinExistingGame")}
               </span>
               <span className="flex-grow border-t border-white/10"></span>
             </div>
@@ -73,7 +73,7 @@ export const MultiplayerSetup = () => {
               className="w-full bg-secondary hover:bg-secondary/90 transition-colors duration-200"
             >
               <Users className="mr-2 h-4 w-4" />
-              Join Game
+              {t("multiplayerSetup.joinGame")}
             </Button>
           </div>
         )}
@@ -84,7 +84,7 @@ export const MultiplayerSetup = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              placeholder={t("multiplayerSetup.enterUsername")}
               maxLength={25}
               className="w-full bg-secondary/20 border-secondary/30"
             />
@@ -92,14 +92,14 @@ export const MultiplayerSetup = () => {
               onClick={handleHost}
               className="w-full bg-primary hover:bg-primary/90"
             >
-              Start Hosting
+              {t("multiplayerSetup.startHosting")}
             </Button>
             <Button
               variant="ghost"
               onClick={() => setShowHostForm(false)}
               className="w-full"
             >
-              Back
+              {t("multiplayerSetup.back")}
             </Button>
           </div>
         )}
@@ -110,7 +110,7 @@ export const MultiplayerSetup = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              placeholder={t("multiplayerSetup.enterUsername")}
               maxLength={25}
               className="w-full bg-secondary/20 border-secondary/30"
             />
@@ -118,21 +118,21 @@ export const MultiplayerSetup = () => {
               type="text"
               value={joinId}
               onChange={(e) => setJoinId(e.target.value)}
-              placeholder="Enter game ID"
+              placeholder={t("multiplayerSetup.enterGameId")}
               className="w-full bg-secondary/20 border-secondary/30"
             />
             <Button
               onClick={handleJoin}
               className="w-full bg-primary hover:bg-primary/90"
             >
-              Join Game
+              {t("multiplayerSetup.joinGame")}
             </Button>
             <Button
               variant="ghost"
               onClick={() => setShowJoinForm(false)}
               className="w-full"
             >
-              Back
+              {t("multiplayerSetup.back")}
             </Button>
           </div>
         )}

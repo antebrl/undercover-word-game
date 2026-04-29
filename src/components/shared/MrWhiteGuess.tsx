@@ -1,9 +1,10 @@
 import { useGame } from "@/context/GameContext";
-import { GameState } from "@/types/game";
 import { CheckCircle, XCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const MrWhiteGuess = () => {
     const { gameState } = useGame();
+  const { t } = useTranslation();
 
     if (!gameState.mrWhiteGuess) return null;
 
@@ -17,7 +18,7 @@ export const MrWhiteGuess = () => {
             <XCircle className="text-red-500" />
           )}
           <p className="text-white">
-            Mr. White guessed: <span className="font-bold">{gameState.mrWhiteGuess}</span>
+            {t("gameEnd.mrWhiteGuessed")} <span className="font-bold">{gameState.mrWhiteGuess}</span>
           </p>
         </div>
       </div>

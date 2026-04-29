@@ -7,11 +7,13 @@ import { useEffect, useState } from "react";
 import { useSound } from "@/context/SoundContext";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const WordReveal = () => {
   const { gameState, setPhase, submitDescription, rerollWords } = useGame();
   const { peer, isHost, sendToHost } = usePeer();
   const { playSound } = useSound();
+  const { t } = useTranslation();
 
   const [description, setDescription] = useState("");
 
@@ -33,7 +35,7 @@ export const WordReveal = () => {
     if (!description.trim()) return;
 
     if (description.trim().toLowerCase() === currentPlayer.word.toLowerCase()) {
-      toast.error("You can't use the word directly!");
+      toast.error(t("wordReveal.cannotUseWordDirectly"));
       return;
     }
 
@@ -50,14 +52,14 @@ export const WordReveal = () => {
   };
 
   if (!peer) {
-    return <div className="text-white text-center">Connecting to game network...</div>;
+    return <div className="text-white text-center">{t("wordReveal.connecting")}</div>;
   }
 
   if (!currentPlayer) {
     return (
       <div className="text-white text-center">
-        <p>Waiting for game data...</p>
-        <p className="text-sm opacity-70">Your ID: {peer.id}</p>
+        <p>{t("wordReveal.waitingForData")}</p>
+        <p className="text-sm opacity-70">{t("wordReveal.yourId")} {peer.id}</p>
       </div>
     );
   }
@@ -76,30 +78,30 @@ export const WordReveal = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 space-y-4 animate-fade-in">
-      <h2 className="text-2xl font-bold text-center mb-4 text-white">{currentPlayer.isEliminated ? "You're eliminated" : "Discussion"}</h2>
+      <h2 className="text-2xl font-bold text-center mb-4 text-white">{currentPlayer.isEliminated ? t("wordReveal.titleEliminated") : t("wordReveal.titleDiscussion")}</h2>
       <Card className="p-6 text-center glass-morphism">
         <div className="space-y-4">
           {currentPlayer.role === "mrwhite" ? (
-            <p className="text-lg text-white">You are <span className="font-bold text-primary">Mr.White</span></p>
+            <p className="text-lg text-white">{t("wordReveal.youAre")} <span className="font-bold text-primary">{t("wordReveal.mrWhite")}</span></p>
           ) : (
             <p className="text-lg text-white">
-              Your word {currentPlayer.isEliminated ? "was" : "is"}: <span className="font-bold text-primary">{currentPlayer.word}</span>
+              {currentPlayer.isEliminated ? t("wordReveal.yourWordWas") : t("wordReveal.yourWordIs")} <span className="font-bold text-primary">{currentPlayer.word}</span>
             </p>
           )}
           <p className="text-sm text-white/70">
             {currentPlayer.role === "mrwhite"
               ? (
                 <>
-                  Listen carefully and try to blend in!
+                  {t("wordReveal.listenCarefully")}
                   <br />
-                  Figure out the secret word from others descriptions.
+                  {t("wordReveal.figureOutSecretWord")}
                 </>
               )
               : (
                 <>
-                  Describe the word without saying it directly.
+                  {t("wordReveal.describeWithoutSaying")}
                   <br />
-                  Be clever - there might be infiltrators among us!
+                  {t("wordReveal.beClever")}
                 </>
               )}
           </p>
@@ -107,14 +109,14 @@ export const WordReveal = () => {
       </Card>
 
       <div className="mt-8 space-y-4">
-        <h3 className="text-xl font-semibold text-white text-center">{isMyTurn ? "Your turn: Describe your word!" : "Speaking Order"}</h3>
+        <h3 className="text-xl font-semibold text-white text-center">{isMyTurn ? t("wordReveal.yourTurn") : t("wordReveal.speakingOrder")}</h3>
 
         {isMyTurn && (
           <div className="relative flex h-10 w-full min-w-[200px]">
             <Input
               value={description}
               onChange={(e) => setDescription(e.target.value.slice(0, 100))}
-              placeholder="Enter word or phrase..."
+              placeholder={t("wordReveal.enterWordOrPhrase")}
               maxLength={25}
               className="peer h-full w-full rounded-[7px] border px-3 py-2.5 pr-20 text-sm font-normal outline-none transition-all"
             />
@@ -125,7 +127,7 @@ export const WordReveal = () => {
                 className="!absolute right-1 top-1 z-10 select-none rounded bg-primary hover:bg-primary/90 py-2 px-4 text-center align-middle text-xs font-bold uppercase text-white shadow-md shadow-primary/20 transition-all focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"
                 data-ripple-light="true"
               >
-                SUBMIT
+                {t("wordReveal.submit")}
               </button>
             )}
           </div>
@@ -145,19 +147,19 @@ export const WordReveal = () => {
             size="lg"
             className="w-full bg-primary hover:bg-primary/90 text-lg font-medium transition-colors duration-200"
           >
-            Start Voting
+            {t("wordReveal.startVoting")}
           </Button>
           {gameState.currentRound === 1 && (
             <Button
               onClick={() => {
                 rerollWords();
-                toast.success("Rerolled word-pair!");
+                toast.success(t("wordReveal.rerolled"));
               }}
               variant="outline"
               size="lg"
               className="w-full border-primary text-primary hover:bg-primary/10"
             >
-              Reroll Words
+              {t("wordReveal.rerollWords")}
             </Button>
           )}
         </div>

@@ -40,7 +40,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const addPlayer = (name: string, id: string) => {
     setGameState((prev) => {
       if (prev.players.length >= 10) {
-        toast.error("Maximum 10 players allowed!");
+        toast.error(t("gameSetup.maxPlayers"));
         return prev;
       }
 
@@ -163,7 +163,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setGameState((prev) => {
       if (prev.currentRound === 0) {
         if (prev.players.length < 4) {
-          toast.error("Minimum 4 players required!");
+          toast.error(t("gameSetup.atLeastFourPlayers"));
           return prev;
         }
 

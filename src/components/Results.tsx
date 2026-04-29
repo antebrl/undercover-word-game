@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useSound } from "@/context/SoundContext";
 import { MrWhiteGuess } from "./shared/MrWhiteGuess";
 import { PlayerList } from "./shared/PlayerList";
+import { useTranslation } from "react-i18next";
 
 export const Results = () => {
   const { gameState, setGameState, submitMrWhiteGuess, eliminatePlayer, checkGameEnd } = useGame();
@@ -17,6 +18,7 @@ export const Results = () => {
   const [guess, setGuess] = useState("");
   const [tieBreakerPlayers, setTieBreakerPlayers] = useState<string[]>([]);
   const [showEliminatedCard, setShowEliminatedCard] = useState(false);
+  const { t } = useTranslation();
 
   const currentPlayer = gameState.players.find(p => p.id === peer?.id);
   const eliminatedPlayer = gameState.players
@@ -77,7 +79,7 @@ export const Results = () => {
 
   const handleGuessSubmit = () => {
     if (!guess.trim()) {
-      toast.error("Please enter a guess");
+      toast.error(t("results.guessRequired"));
       return;
     }
 
@@ -108,35 +110,33 @@ export const Results = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 space-y-6 animate-fade-in">
-      <h2 className="text-2xl font-bold text-center mb-4 text-white">Results</h2>
+      <h2 className="text-2xl font-bold text-center mb-4 text-white">{t("results.title")}</h2>
 
       {showEliminatedCard && eliminatedPlayer && (
         <Card className="p-6 text-center glass-morphism">
           <h3 className="text-xl font-bold mb-4 text-white">
-            {currentPlayerGotEliminated ? "You have been eliminated" : `${eliminatedPlayer.name} was eliminated!`}
+            {currentPlayerGotEliminated ? t("results.eliminatedYou") : t("results.eliminatedPlayer", { name: eliminatedPlayer.name })}
           </h3>
           <p className="text-lg mb-2 text-white">
-            {currentPlayerGotEliminated ? "You" : "They"} were a{" "}
+            {currentPlayerGotEliminated ? t("results.you") : t("results.they")} {t("results.wereA")} {" "}
             <span className="font-bold text-primary">
-              {eliminatedPlayer.role === "mrwhite"
-                ? "Mr. White"
-                : eliminatedPlayer.role}
+              {t(`roles.${eliminatedPlayer.role}`)}
             </span>
           </p>
           {eliminatedPlayer.role !== "mrwhite" && currentPlayer?.isEliminated && !currentPlayerGotEliminated && (
             <p className="text-white/80">
-              Their word was: {eliminatedPlayer.word}
+              {t("results.theirWordWas")} {eliminatedPlayer.word}
             </p>
           )}
 
           {isMrWhiteGuessing && currentPlayerGotEliminated && (
             <div className="mt-4 space-y-4">
-              <p className="text-white/80">Make your final guess!</p>
+              <p className="text-white/80">{t("results.finalGuess")}</p>
               <div className="flex gap-2">
                 <Input
                   value={guess}
                   onChange={(e) => setGuess(e.target.value)}
-                  placeholder="Enter your guess..."
+                  placeholder={t("results.enterGuess")}
                   className="flex-1"
                 />
                 <Button
@@ -170,7 +170,7 @@ export const Results = () => {
         disabled={!canContinue}
         variant={canContinue ? "default" : "secondary"}
       >
-        Continue Game
+        {t("results.continueGame")}
       </Button>
     </div>
   );
