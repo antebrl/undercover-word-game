@@ -12,6 +12,7 @@ import { GameEnd } from "../components/GameEnd";
 import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 import { SoundProvider } from "@/context/SoundContext";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const GameContent = () => {
   const { gameState } = useGame();
@@ -46,6 +47,7 @@ const GameContent = () => {
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-accent via-secondary to-accent text-white">
+      <LanguageSwitcher />
       <div className="container mx-auto px-4 py-3">
         <SoundProvider>
           <GameProvider>
