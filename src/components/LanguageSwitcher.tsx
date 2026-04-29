@@ -22,14 +22,14 @@ export const LanguageSwitcher = () => {
 	};
 
 	return (
-		<div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-white shadow-lg backdrop-blur-md">
+		<div className="flex items-center gap-3 rounded-full border text-white shadow-lg backdrop-blur-md">
 
 			<Select
 				value={currentLanguage}
 				onValueChange={handleChangeLanguage}
 			>
 				<SelectTrigger
-					className="h-9 w-[70px] rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10 focus:ring-white/30"
+					className="h-9 w-[70px] rounded-full border-white/10 bg-black/30 text-white hover:bg-white/10 focus:ring-white/30"
 					aria-label={t("language")}
 				>
 					<SelectValue placeholder={t("language")} />
