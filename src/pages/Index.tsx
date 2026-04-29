@@ -47,12 +47,14 @@ const GameContent = () => {
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-accent via-secondary to-accent text-white">
-      <LanguageSwitcher />
       <div className="container mx-auto px-4 py-3">
         <SoundProvider>
           <GameProvider>
             <PeerProvider>
-              <div className="max-w-4xl mx-auto">
+              <div className="mx-auto flex max-w-4xl flex-col gap-4">
+                <div className="flex justify-end">
+                  <LanguageSwitcher />
+                </div>
                 <GameContent />
               </div>
             </PeerProvider>

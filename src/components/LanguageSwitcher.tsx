@@ -22,10 +22,7 @@ export const LanguageSwitcher = () => {
 	};
 
 	return (
-		<div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-white shadow-lg backdrop-blur-md">
-			<span className="hidden text-xs uppercase tracking-[0.3em] text-white/60 sm:block">
-				{t("language")}
-			</span>
+		<div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-white shadow-lg backdrop-blur-md">
 
 			<Select
 				value={currentLanguage}
