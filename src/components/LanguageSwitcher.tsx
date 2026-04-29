@@ -10,6 +10,7 @@ import {
 const languages = [
 	{ code: "en", label: "EN" },
 	{ code: "de", label: "DE" },
+	{ code: "fr", label: "FR" },
 ];
 
 export const LanguageSwitcher = () => {
@@ -27,7 +28,7 @@ export const LanguageSwitcher = () => {
 			</span>
 
 			<Select
-				value={currentLanguage?.startsWith("de") ? "de" : "en"}
+				value={currentLanguage}
 				onValueChange={handleChangeLanguage}
 			>
 				<SelectTrigger
