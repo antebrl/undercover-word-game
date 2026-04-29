@@ -7,17 +7,19 @@ import { PlayerList } from "./shared/PlayerList";
 import { Card } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { distributionMeetsLimits } from "@/config/roleDistribution";
+import { useTranslation } from "react-i18next";
 
 export const GameSetup = () => {
   const { gameState, startGame, updateRoleDistribution } = useGame();
   const { hostId, isHost } = usePeer();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const handleCopyLink = () => {
     if (hostId) {
       const gameLink = `${window.location.origin}${import.meta.env.BASE_URL}?gameId=${hostId}`;
       navigator.clipboard.writeText(gameLink);
-      toast.success("Game link copied to clipboard!");
+      toast.success(t("gameSetup.copied"));
     }
   };
 
@@ -26,7 +28,7 @@ export const GameSetup = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8 animate-fade-in">
-      <h1 className="text-4xl font-bold text-white mb-8 text-center">Game Setup</h1>
+      <h1 className="text-4xl font-bold text-white mb-8 text-center">{t("gameSetup.title")}</h1>
 
       <div
         onClick={handleCopyLink}
@@ -34,7 +36,7 @@ export const GameSetup = () => {
       >
         <div className="flex items-center gap-2 text-white/90 text-lg mb-4">
           <Hash className="h-5 w-5" />
-          <span>Game Link - Share to friends</span>
+          <span>{t("gameSetup.shareLabel")}</span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 w-full">
@@ -52,10 +54,10 @@ export const GameSetup = () => {
 
         <div className="space-y-6">
           <Card className="p-6 bg-white/5">
-            <h3 className="text-lg font-semibold text-white mb-6">Role Distribution</h3>
+            <h3 className="text-lg font-semibold text-white mb-6">{t("gameSetup.roleDistribution")}</h3>
             <div className="space-y-6">
               <div className="text-center text-white/70">
-                {gameState.players.length - roleDistribution.mrWhites - roleDistribution.undercovers} civilians
+                {gameState.players.length - roleDistribution.mrWhites - roleDistribution.undercovers} {t("gameSetup.civilians")}
               </div>
               <div className="flex items-center justify-between gap-4">
                 <Button
@@ -74,7 +76,7 @@ export const GameSetup = () => {
                   <Minus className="h-4 w-4" />
                 </Button>
                 <div className="flex-1 text-center text-white">
-                  {roleDistribution.undercovers} undercovers
+                  {roleDistribution.undercovers} {t("gameSetup.undercovers")}
                 </div>
                 <Button
                   variant="outline"
@@ -109,7 +111,7 @@ export const GameSetup = () => {
                   <Minus className="h-4 w-4" />
                 </Button>
                 <div className="flex-1 text-center text-white">
-                  {roleDistribution.mrWhites} mr whites
+                  {roleDistribution.mrWhites} {t("gameSetup.mrWhites")}
                 </div>
                 <Button
                   variant="outline"
@@ -133,7 +135,7 @@ export const GameSetup = () => {
           <div className="space-y-2">
             {!hasEnoughPlayers && (
               <div className="text-red-500 text-sm text-center mb-2">
-                At least 4 players are required to start the game
+                {t("gameSetup.atLeastFourPlayers")}
               </div>
             )}
             <Button
@@ -142,7 +144,7 @@ export const GameSetup = () => {
               disabled={!isHost || !hasEnoughPlayers}
               className="w-full bg-primary hover:bg-primary/90 text-lg font-medium transition-colors duration-200 disabled:opacity-50"
             >
-              Start Game ({gameState.players.length} players)
+              {t("gameSetup.startGame", { count: gameState.players.length })}
             </Button>
           </div>
         </div>

@@ -12,6 +12,7 @@ import { GameEnd } from "../components/GameEnd";
 import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 import { SoundProvider } from "@/context/SoundContext";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const GameContent = () => {
   const { gameState } = useGame();
@@ -50,7 +51,10 @@ const Index = () => {
         <SoundProvider>
           <GameProvider>
             <PeerProvider>
-              <div className="max-w-4xl mx-auto">
+              <div className="mx-auto flex max-w-4xl flex-col gap-4">
+                <div className="flex justify-end">
+                  <LanguageSwitcher />
+                </div>
                 <GameContent />
               </div>
             </PeerProvider>

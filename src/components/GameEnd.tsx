@@ -6,11 +6,13 @@ import { Trophy, User } from "lucide-react";
 import { useSound } from "@/context/SoundContext";
 import { useEffect } from "react";
 import { MrWhiteGuess } from "./shared/MrWhiteGuess";
+import { useTranslation } from "react-i18next";
 
 export const GameEnd = () => {
   const { gameState, resetGame, setGameState } = useGame();
   const { peer, isHost } = usePeer();
   const { playSound } = useSound();
+  const { t } = useTranslation();
 
   const currentPlayer = gameState.players.find(p => p.id === peer?.id);
 
@@ -68,7 +70,7 @@ export const GameEnd = () => {
         ) : (
           <User className="w-16 h-16 text-red-400 mx-auto" />
         )}
-        <h1 className="text-4xl font-bold text-white text-center">Game Over!</h1>
+        <h1 className="text-4xl font-bold text-white text-center">{t("gameEnd.title")}</h1>
       </div>
 
       <MrWhiteGuess />
@@ -77,10 +79,10 @@ export const GameEnd = () => {
         <div className="space-y-4">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-white">
-              {gameState.winner === "civilian" && "Civilians Win!"}
-              {gameState.winner === "undercover" && "Undercover Wins!"}
-              {gameState.winner === "mrwhite" && "Mr. White Wins!"}
-              {gameState.winner === "infiltrators" && "Infiltrators Win!"}
+              {gameState.winner === "civilian" && t("gameEnd.civilianWin")}
+              {gameState.winner === "undercover" && t("gameEnd.undercoverWin")}
+              {gameState.winner === "mrwhite" && t("gameEnd.mrWhiteWin")}
+              {gameState.winner === "infiltrators" && t("gameEnd.infiltratorsWin")}
             </h2>
           </div>
 
@@ -98,7 +100,7 @@ export const GameEnd = () => {
                 <div>
                   <p className="text-lg block max-w-[250px] truncate text-white">{player.name}</p>
                   <p className="text-sm text-white/70">
-                  {player.role}{player.word && ` - Word: ${player.word}`}
+                  {t(`roles.${player.role}`)}{player.word && ` - ${t("gameEnd.word")} ${player.word}`}
                   </p>
                 </div>
                 </div>
@@ -113,7 +115,7 @@ export const GameEnd = () => {
           size="lg"
           className="w-full bg-primary hover:bg-primary/90 text-lg font-medium transition-colors duration-200"
         >
-          Start New Round
+          {t("gameEnd.startNewRound")}
         </Button>
       )}
     </div>

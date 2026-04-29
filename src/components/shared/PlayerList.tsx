@@ -3,6 +3,7 @@ import { Users, UserX } from "lucide-react";
 import { Player } from "../../types/game";
 import { useEffect, useState } from "react";
 import { useSound } from "@/context/SoundContext";
+import { useTranslation } from "react-i18next";
 
 interface PlayerListProps {
   players: Player[];
@@ -30,6 +31,7 @@ export const PlayerList = ({
   tieBreakerPlayers = [],
 }: PlayerListProps) => {
   const { playSound } = useSound();
+  const { t } = useTranslation();
 
   // The player that is going to be eliminated (red highlight)
   const [highlightedPlayer, setHighlightedPlayer] = useState<string | null>(null);
@@ -105,7 +107,7 @@ export const PlayerList = ({
       <div className="space-y-4">
         <div className="flex items-center gap-2 text-white/90 text-lg">
           <Users className="h-5 w-5" />
-          <span>Players ({displayPlayers.length})</span>
+          <span>{t("playerList.players", { count: displayPlayers.length })}</span>
         </div>
 
         <div className="space-y-2">
@@ -151,7 +153,7 @@ export const PlayerList = ({
                     <span className={`text-lg block max-w-[250px] truncate ${isCurrentSpeaker ? 'text-primary font-bold' : 'text-white'}`}>
                       {player.name}
                       {player.id === currentPlayerId && (
-                        <span className="text-primary ml-2">(You)</span>
+                        <span className="text-primary ml-2">{t("common.you")}</span>
                       )}
                     </span>
                     {/* Text or phrase the player has submitted this round */}
@@ -177,7 +179,7 @@ export const PlayerList = ({
                   </div>
                   {player.isEliminated && player.role && (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-white/70">{player.role}</span>
+                      <span className="text-sm text-white/70">{t(`roles.${player.role}`)}</span>
                       <UserX className="h-5 w-5 text-red-500" />
                     </div>
                   )}
@@ -188,7 +190,7 @@ export const PlayerList = ({
                     <div className="w-px self-stretch bg-gray-300/20"></div>
                     <div className="flex items-center gap-1">
                       <span className="text-lg font-bold text-white">{player.score}</span>
-                      <span className="text-sm text-white/70">PTS</span>
+                      <span className="text-sm text-white/70">{t("playerList.points")}</span>
                     </div>
                   </div>
                 )}

@@ -4,6 +4,7 @@ import { useGame } from "./GameContext";
 import { toast } from "sonner";
 import { GameState } from "../types/game";
 import { useSound } from "./SoundContext";
+import { useTranslation } from "react-i18next";
 
 interface PeerContextType {
   peer: Peer | null;
@@ -20,6 +21,7 @@ const PeerContext = createContext<PeerContextType | undefined>(undefined);
 
 export const PeerProvider = ({ children }: { children: React.ReactNode }) => {
   const { playSound } = useSound();
+  const { t } = useTranslation();
   
   const [peer, setPeer] = useState<Peer | null>(null);
   const [connections, setConnections] = useState<Record<string, DataConnection>>({});
@@ -37,7 +39,7 @@ export const PeerProvider = ({ children }: { children: React.ReactNode }) => {
 
     newPeer.on("error", (error) => {
       console.error("Peer error:", error);
-      toast.error("Connection error occurred");
+      toast.error(t("peer.connectionError"));
     });
 
     //HOST CONNECTION EVENTS
@@ -67,7 +69,7 @@ export const PeerProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("Connection closed with:", conn.peer);
 
         removePlayer(conn.peer);
-        toast.error(`${gameState.players.find(p => p.id === conn.peer)?.name || 'A player'} disconnected`);
+        toast.error(t("peer.playerDisconnected", { name: gameState.players.find(p => p.id === conn.peer)?.name || t("peer.unknownPlayer") }));
 
         setConnections(prev => {
           const newConnections = { ...prev };
@@ -128,7 +130,7 @@ export const PeerProvider = ({ children }: { children: React.ReactNode }) => {
     setIsHost(true);
     setHostId(peer.id);
     addPlayer(username, peer.id);
-    toast.success(`Game hosted! Share this ID with players: ${peer.id}`);
+    toast.success(t("peer.gameHosted", { id: peer.id }));
   };
 
   const joinGame = (hostId: string, username: string) => {
@@ -151,7 +153,7 @@ export const PeerProvider = ({ children }: { children: React.ReactNode }) => {
       setConnections(prev => ({ ...prev, [hostId]: conn }));
       setHostId(hostId);
       conn.send({ type: "JOIN_GAME", username });
-      toast.success("Connected to game!");
+      toast.success(t("peer.connected"));
     });
 
     conn.on("data", (data: any) => {
@@ -171,7 +173,7 @@ export const PeerProvider = ({ children }: { children: React.ReactNode }) => {
       });
       setHostId(null);
       setIsHost(false);
-      toast.error("Host closed connection");
+      toast.error(t("peer.hostClosedConnection"));
     });
   };
 

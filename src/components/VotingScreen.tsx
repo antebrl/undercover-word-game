@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { PlayerList } from "./shared/PlayerList";
 import { useSound } from "@/context/SoundContext";
+import { useTranslation } from "react-i18next";
 
 export const VotingScreen = () => {
   const { gameState, submitVote } = useGame();
   const { peer, isHost, sendToHost } = usePeer();
   const { playSound } = useSound();
   const [selectedPlayer, setSelectedPlayer] = useState<string>("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     playSound("/sounds/new-page.mp3");
@@ -27,7 +29,7 @@ export const VotingScreen = () => {
   if (isEliminated) {
     return (
       <div className="max-w-md mx-auto p-6 space-y-6 animate-fade-in">
-        <h2 className="text-2xl font-bold text-center mb-4 text-gradient">Voting in Progress</h2>
+        <h2 className="text-2xl font-bold text-center mb-4 text-gradient">{t("voting.inProgress")}</h2>
         <PlayerList
           players={activePlayers}
           votingResults={gameState.votingResults}
@@ -55,7 +57,7 @@ export const VotingScreen = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 space-y-6 animate-fade-in">
-      <h2 className="text-2xl font-bold text-center mb-4 text-gradient">Vote to Eliminate</h2>
+      <h2 className="text-2xl font-bold text-center mb-4 text-gradient">{t("voting.voteToEliminate")}</h2>
 
       <PlayerList
         players={activePlayers}
@@ -71,7 +73,7 @@ export const VotingScreen = () => {
           disabled={!selectedPlayer}
           className="w-full mt-4 bg-primary hover:bg-primary/90"
         >
-          Submit Vote
+          {t("voting.submitVote")}
         </Button>
       )}
     </div>
