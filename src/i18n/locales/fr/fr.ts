@@ -30,7 +30,8 @@ export default {
       civilians: "civils",
       undercovers: "infiltrés",
       mrWhites: "Mr. White",
-      atLeastFourPlayers: "Au moins 4 joueurs sont nécessaires pour commencer la partie",
+      atLeastFourPlayers:
+        "Au moins 4 joueurs sont nécessaires pour commencer la partie",
       maxPlayers: "10 joueurs maximum autorisés !",
       startGame: "Lancer la partie ({{count}} joueurs)",
     },
@@ -45,8 +46,10 @@ export default {
       mrWhite: "Mr. White",
       yourWordWas: "Votre mot était :",
       yourWordIs: "Votre mot est :",
-      listenCarefully: "Écoutez attentivement et essayez de vous fondre dans le groupe !",
-      figureOutSecretWord: "Trouvez le mot secret à partir des descriptions des autres.",
+      listenCarefully:
+        "Écoutez attentivement et essayez de vous fondre dans le groupe !",
+      figureOutSecretWord:
+        "Trouvez le mot secret à partir des descriptions des autres.",
       describeWithoutSaying: "Décrivez le mot sans le dire directement.",
       beClever: "Soyez malin - il pourrait y avoir des infiltrés parmi nous !",
       yourTurn: "C'est à vous : décrivez votre mot !",
@@ -70,9 +73,8 @@ export default {
       title: "Résultats",
       eliminatedYou: "Vous avez été éliminé",
       eliminatedPlayer: "{{name}} a été éliminé !",
-      you: "Vous",
-      they: "Ils",
-      wereA: "était un",
+      youWereA: "Tu étais un·e",
+      theyWereA: "Iel était un·e",
       theirWordWas: "Leur mot était :",
       finalGuess: "Faites votre dernière supposition !",
       enterGuess: "Entrez votre supposition...",
@@ -108,5 +110,5 @@ export default {
       hostClosedConnection: "L'hôte a fermé la connexion",
     },
     wordPairs: wordPairs,
-  }
+  },
 };

@@ -110,24 +110,34 @@ export const Results = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 space-y-6 animate-fade-in">
-      <h2 className="text-2xl font-bold text-center mb-4 text-white">{t("results.title")}</h2>
+      <h2 className="text-2xl font-bold text-center mb-4 text-white">
+        {t("results.title")}
+      </h2>
 
       {showEliminatedCard && eliminatedPlayer && (
         <Card className="p-6 text-center glass-morphism">
           <h3 className="text-xl font-bold mb-4 text-white">
-            {currentPlayerGotEliminated ? t("results.eliminatedYou") : t("results.eliminatedPlayer", { name: eliminatedPlayer.name })}
+            {currentPlayerGotEliminated
+              ? t("results.eliminatedYou")
+              : t("results.eliminatedPlayer", { name: eliminatedPlayer.name })}
           </h3>
           <p className="text-lg mb-2 text-white">
-            {currentPlayerGotEliminated ? t("results.you") : t("results.they")} {t("results.wereA")} {" "}
+            {t(
+              currentPlayerGotEliminated
+                ? "results.youWereA"
+                : "results.theyWereA",
+            )}{" "}
             <span className="font-bold text-primary">
               {t(`roles.${eliminatedPlayer.role}`)}
             </span>
           </p>
-          {eliminatedPlayer.role !== "mrwhite" && currentPlayer?.isEliminated && !currentPlayerGotEliminated && (
-            <p className="text-white/80">
-              {t("results.theirWordWas")} {eliminatedPlayer.word}
-            </p>
-          )}
+          {eliminatedPlayer.role !== "mrwhite" &&
+            currentPlayer?.isEliminated &&
+            !currentPlayerGotEliminated && (
+              <p className="text-white/80">
+                {t("results.theirWordWas")} {eliminatedPlayer.word}
+              </p>
+            )}
 
           {isMrWhiteGuessing && currentPlayerGotEliminated && (
             <div className="mt-4 space-y-4">
@@ -159,7 +169,8 @@ export const Results = () => {
         currentPlayerId={peer?.id}
         tieBreakerPlayers={
           gameState.mrWhiteGuess == null // prevent playing tiebreaker animation again after mrWhite guess
-          ? tieBreakerPlayers : []
+            ? tieBreakerPlayers
+            : []
         }
         lastEliminatedId={gameState.lastEliminatedId}
       />
