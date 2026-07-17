@@ -14,7 +14,7 @@ interface PeerContextType {
   hostGame: (username: string) => void;
   joinGame: (hostId: string, username: string) => void;
   sendGameState: (state: GameState) => void;
-  sendToHost: (data: any) => void;
+  sendToHost: (data: unknown) => void;
 }
 
 const PeerContext = createContext<PeerContextType | undefined>(undefined);
@@ -22,155 +22,114 @@ const PeerContext = createContext<PeerContextType | undefined>(undefined);
 export const PeerProvider = ({ children }: { children: React.ReactNode }) => {
   const { playSound } = useSound();
   const { t } = useTranslation();
-  
   const [peer, setPeer] = useState<Peer | null>(null);
   const [connections, setConnections] = useState<Record<string, DataConnection>>({});
   const [hostId, setHostId] = useState<string | null>(null);
   const [isHost, setIsHost] = useState(false);
-  const { gameState, setGameState, addPlayer, removePlayer, submitMrWhiteGuess, submitVote, submitDescription } = useGame();
+
+  const {
+    gameState, setGameState, addPlayer, removePlayer,
+    submitMrWhiteGuess, submitVote, submitDescription,
+    resolveJusticeDecision, resolveRevengerDecision, resolveFalafelDecision,
+  } = useGame();
 
   useEffect(() => {
     const newPeer = new Peer();
-    
-    newPeer.on("open", (id) => {
-      console.log("My peer ID is:", id);
-      setPeer(newPeer);
-    });
+    newPeer.on("open", () => setPeer(newPeer));
+    newPeer.on("error", () => toast.error(t("peer.connectionError")));
 
-    newPeer.on("error", (error) => {
-      console.error("Peer error:", error);
-      toast.error(t("peer.connectionError"));
-    });
-
-    //HOST CONNECTION EVENTS
     newPeer.on("connection", (conn) => {
-      console.log("Incoming connection from:", conn.peer);
-
-      // Monitor ICE connection state - [unexpected disconnect handling]
       const pc = conn.peerConnection;
       pc.oniceconnectionstatechange = () => {
-        console.log("ICE state:", pc.iceConnectionState);
         if (["disconnected", "failed"].includes(pc.iceConnectionState)) {
-          console.log("ICE disconnect detected");
           removePlayer(conn.peer);
           conn.close();
         }
       };
-      
+
       conn.on("open", () => {
         setConnections(prev => ({ ...prev, [conn.peer]: conn }));
-
-        if (gameState) {
-          conn.send({ type: "GAME_STATE", state: gameState });
-        }
+        if (gameState) conn.send({ type: "GAME_STATE", state: gameState });
       });
 
       conn.on("close", () => {
-        console.log("Connection closed with:", conn.peer);
-
         removePlayer(conn.peer);
-        toast.error(t("peer.playerDisconnected", { name: gameState.players.find(p => p.id === conn.peer)?.name || t("peer.unknownPlayer") }));
-
-        setConnections(prev => {
-          const newConnections = { ...prev };
-          delete newConnections[conn.peer];
-          return newConnections;
-        });
+        toast.error(t("peer.playerDisconnected", {
+          name: gameState.players.find(p => p.id === conn.peer)?.name || t("peer.unknownPlayer"),
+        }));
+        setConnections(prev => { const n = { ...prev }; delete n[conn.peer]; return n; });
       });
 
-      conn.on("data", (data: any) => {
-        console.debug("Received data:", data);
-        switch (data.type) {
+      conn.on("data", (data: unknown) => {
+        const msg = data as Record<string, unknown>;
+        switch (msg.type) {
           case "JOIN_GAME":
-            console.log("New player joining:", data.username);
             playSound("/sounds/player-joined.mp3");
-            addPlayer(data.username, conn.peer);
+            addPlayer(msg.username as string, conn.peer);
             conn.send({ type: "GAME_STATE", state: gameState });
             break;
           case "GAME_STATE":
-            console.debug("Received game state:", data.state);
-            setGameState(data.state);
+            setGameState(msg.state as GameState);
             break;
           case "SUBMIT_VOTE":
-            console.debug("Received vote:", data);
-            submitVote(data.voterId, data.targetId);
+            submitVote(msg.voterId as string, msg.targetId as string);
             break;
           case "SUBMIT_DESCRIPTION":
-            console.debug("Received description:", data);
-            submitDescription(data.playerId, data.description);
+            submitDescription(msg.playerId as string, msg.description as string);
             break;
           case "MR_WHITE_GUESS":
-            console.debug("Received Mr. White guess:", data);
-            submitMrWhiteGuess(data.guess);
+            submitMrWhiteGuess(msg.guess as string);
+            break;
+          // Special role decisions (host resolves, clients notify host)
+          case "JUSTICE_DECISION":
+            resolveJusticeDecision(msg.chosenId as string);
+            break;
+          case "REVENGER_DECISION":
+            resolveRevengerDecision(msg.targetId as string);
+            break;
+          case "FALAFEL_DECISION":
+            resolveFalafelDecision(msg.targetId as string);
             break;
           default:
-            console.log("Unknown data type:", data.type);
+            console.log("Unknown message type:", msg.type);
         }
       });
     });
 
-    //Cleanup on host disconnect
-    const cleanupHost = () => {
-      if (!newPeer.disconnected) {
-        console.log("Disconnecting peer");
-        newPeer.destroy();
-      }
-      window.removeEventListener('beforeunload', cleanupHost);
-    };
-    window.addEventListener('beforeunload', cleanupHost);
-
-    return () => {
-      newPeer.destroy();
-    };
+    const cleanup = () => { if (!newPeer.disconnected) newPeer.destroy(); };
+    window.addEventListener("beforeunload", cleanup);
+    return () => { newPeer.destroy(); window.removeEventListener("beforeunload", cleanup); };
   }, []);
 
   const hostGame = (username: string) => {
     if (!peer) return;
-    console.log("Hosting game with peer ID:", peer.id);
     setIsHost(true);
     setHostId(peer.id);
     addPlayer(username, peer.id);
     toast.success(t("peer.gameHosted", { id: peer.id }));
   };
 
-  const joinGame = (hostId: string, username: string) => {
+  const joinGame = (hId: string, username: string) => {
     if (!peer) return;
-    
-    const conn = peer.connect(hostId);
-    console.log("Joining game with peer ID:", peer.id);
+    const conn = peer.connect(hId);
 
-    const cleanupClient = () => {
-      if (!peer.disconnected) {
-        console.log("Disconnecting peer");
-        peer.destroy();
-      }
-      window.removeEventListener('beforeunload', cleanupClient);
-    };
-    window.addEventListener('beforeunload', cleanupClient);
-    
-    //Client connection events
+    const cleanup = () => { if (!peer.disconnected) peer.destroy(); };
+    window.addEventListener("beforeunload", cleanup);
+
     conn.on("open", () => {
-      setConnections(prev => ({ ...prev, [hostId]: conn }));
-      setHostId(hostId);
+      setConnections(prev => ({ ...prev, [hId]: conn }));
+      setHostId(hId);
       conn.send({ type: "JOIN_GAME", username });
       toast.success(t("peer.connected"));
     });
 
-    conn.on("data", (data: any) => {
-      console.debug("Received data in connection:", data);
-      if (data.type === "GAME_STATE") {
-        console.debug("Setting received game state:", data.state);
-        setGameState(data.state);
-      }
+    conn.on("data", (data: unknown) => {
+      const msg = data as Record<string, unknown>;
+      if (msg.type === "GAME_STATE") setGameState(msg.state as GameState);
     });
 
     conn.on("close", () => {
-      console.log("Connection closed with host");
-      setConnections(prev => {
-        const newConnections = { ...prev };
-        delete newConnections[hostId];
-        return newConnections;
-      });
+      setConnections(prev => { const n = { ...prev }; delete n[hId]; return n; });
       setHostId(null);
       setIsHost(false);
       toast.error(t("peer.hostClosedConnection"));
@@ -178,50 +137,30 @@ export const PeerProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const sendGameState = (state: GameState) => {
-    console.debug("Sending game state to all connections:", state);
-    Object.values(connections).forEach(conn => {
-      conn.send({ type: "GAME_STATE", state });
-    });
+    Object.values(connections).forEach(conn => conn.send({ type: "GAME_STATE", state }));
   };
 
-  const sendToHost = (data: any) => {
-    if (!hostId || !connections[hostId]) {
-      console.error("No connection to host");
-      return;
-    }
-    console.log("Sending data to host:", data);
+  const sendToHost = (data: unknown) => {
+    if (!hostId || !connections[hostId]) return;
     connections[hostId].send(data);
   };
 
+  // Broadcast state changes to all clients whenever the host's state changes
   useEffect(() => {
     if (isHost && Object.keys(connections).length > 0) {
-      console.log("Host sending updated game state to all connections");
       sendGameState(gameState);
     }
   }, [gameState, isHost, connections]);
 
   return (
-    <PeerContext.Provider
-      value={{
-        peer,
-        connections,
-        hostId,
-        isHost,
-        hostGame,
-        joinGame,
-        sendGameState,
-        sendToHost,
-      }}
-    >
+    <PeerContext.Provider value={{ peer, connections, hostId, isHost, hostGame, joinGame, sendGameState, sendToHost }}>
       {children}
     </PeerContext.Provider>
   );
 };
 
 export const usePeer = () => {
-  const context = useContext(PeerContext);
-  if (!context) {
-    throw new Error("usePeer must be used within a PeerProvider");
-  }
-  return context;
+  const ctx = useContext(PeerContext);
+  if (!ctx) throw new Error("usePeer must be used within a PeerProvider");
+  return ctx;
 };

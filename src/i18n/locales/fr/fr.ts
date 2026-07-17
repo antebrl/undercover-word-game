@@ -109,6 +109,7 @@ export default {
       connected: "Connecté à la partie !",
       hostClosedConnection: "L'hôte a fermé la connexion",
     },
+    specialRoles: { justice: { desc: "Décide en cas d'égalité" }, lovers: { desc: "Si l'un meurt l'autre aussi" }, revenger: { desc: "Élimine un joueur en mourant" }, ghost: { desc: "Reste actif après la mort" }, joyFool: { desc: "Bonus si éliminé en premier" }, boomerang: { desc: "Vote retourné contre les votants" }, duelist: { desc: "Rivaux - le survivant gagne des points" }, falafelVendor: { desc: "Attribue un effet aléatoire" }, mrMeme: { desc: "Emojis uniquement" } }, justice: { title: "Justice ⚖️", subtitle: "Égalité! {{name}} décide.", yourTurn: "Choisissez:", waiting: "Attente de {{name}}…" }, revenger: { title: "Vengeur 💀", subtitle: "{{name}} se venge.", yourTurn: "Choisissez un joueur:", waiting: "Attente de {{name}}…" }, falafel: { title: "Falafel 🥙", subtitle: "{{name}} est le Vendeur.", yourTurn: "Choisissez un joueur:", effectNote: "Effet privé.", waiting: "Attente de {{name}}…", effects: { extraVote: "Vote +1 🗳️", cannotVote: "Pas de vote 🚫", protected: "Protégé 🛡️", doubleVote: "Double vote ✌️", silenced: "Silencieux 🤐" } }, offline: { playerOf: "Joueur {{current}}/{{total}}", passTo: "Passer à {{name}}", tapToReveal: "Appuyer pour voir", revealMyWord: "Mon mot", startGame: "Discussion", done: "Terminé", tapToVote: "Appuyer pour voter", revealVoting: "Voir le vote" },
     wordPairs: wordPairs,
   },
 };
